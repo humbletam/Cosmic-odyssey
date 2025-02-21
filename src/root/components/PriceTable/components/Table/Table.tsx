@@ -1,8 +1,15 @@
 import { FC } from "react";
-import { useFetchPrices } from "@/root/hooks";
+import { Route } from "@/root/types";
+import { useCalculateTravelDetails } from "@/root/hooks";
 
-export const Table: FC = () => {
-  const { routes } = useFetchPrices();
+interface TableProps {
+  routes: Route[];
+}
+
+export const Table: FC<TableProps> = ({ routes }) => {
+  const providers = routes.flatMap((route) => route.providers);
+  const calculatedProviders = useCalculateTravelDetails(providers);
+
   return (
     <table className="w-full bg-white border rounded">
       <thead>
@@ -14,19 +21,14 @@ export const Table: FC = () => {
         </tr>
       </thead>
       <tbody>
-        {routes.map((route, routeIndex) =>
-          route.providers.map((provider, providerIndex) => (
-            <tr
-              key={`${routeIndex}-${providerIndex}`}
-              className="text-center border"
-            >
-              <td className="p-2 border">{provider.company.name}</td>
-              <td className="p-2 border">{provider.price} €</td>
-              <td className="p-2 border">{provider.flightStart}</td>
-              <td className="p-2 border">{provider.flightEnd}</td>
-            </tr>
-          )),
-        )}
+        {calculatedProviders.map((provider, index) => (
+          <tr key={index} className="text-center border">
+            <td className="p-2 border">{provider.company.name}</td>
+            <td className="p-2 border">{provider.price} €</td>
+            <td className="p-2 border">{provider.distance} km</td>
+            <td className="p-2 border">{provider.travelTime} hours</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
