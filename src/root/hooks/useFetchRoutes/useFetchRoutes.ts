@@ -1,24 +1,7 @@
 import { useEffect, useState } from "react";
+import type { Route } from "@/root/types";
 
-interface Company {
-  id: string;
-  name: string;
-}
-
-interface Provider {
-  company: Company;
-  flightEnd: string;
-  flightStart: string;
-  id: string;
-  price: number;
-}
-
-interface Route {
-  id: string;
-  providers: Provider[];
-}
-
-const useFetchPrices = () => {
+export const useFetchRoutes = () => {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,9 +14,7 @@ const useFetchPrices = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
-        console.log("Fetched data:", data);
         const routesData = JSON.parse(data.contents);
-        console.log("Parsed routes:", routesData);
         setRoutes(routesData.legs);
       } catch (err) {
         if (err instanceof Error) {
@@ -51,5 +32,3 @@ const useFetchPrices = () => {
 
   return { routes, loading, error };
 };
-
-export default useFetchPrices;
