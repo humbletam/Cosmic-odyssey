@@ -1,6 +1,7 @@
 ## Getting Started
+First, please download packages
 
-First, run the development server:
+command: yarn
 
-```bash
-## yarn dev
+Then, run the development server:
+command: yarn dev
