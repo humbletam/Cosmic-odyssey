@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { Provider, Route } from "@/root/types/route-types/route-types";
+import { Provider, Route } from "@/root/types";
+import { destinations, origins } from "@/root/consts";
 
 const formatDateTime = (date: Date): string => {
   const hours = date.getHours().toString().padStart(2, "0");
@@ -18,27 +19,8 @@ export const useGenerateAndFilterRoutes = (
 ): Route[] =>
   useMemo(() => {
     if (!providers || providers.length === 0) return [];
-    const origins = [
-      "Mercury",
-      "Venus",
-      "Earth",
-      "Mars",
-      "Jupiter",
-      "Saturn",
-      "Uranus",
-      "Neptune",
-    ];
-    const destinations = [
-      "Mercury",
-      "Venus",
-      "Earth",
-      "Mars",
-      "Jupiter",
-      "Saturn",
-      "Uranus",
-      "Neptune",
-    ];
     const now = new Date();
+
     let genRoutes = providers.map((provider, index) => {
       const offsetMinutes = Math.floor(Math.random() * 60);
       const flightStartDate = new Date(now.getTime() + offsetMinutes * 60000);

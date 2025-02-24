@@ -16,7 +16,7 @@ export const PriceTable: FC<PriceTableProps> = ({
   origin,
 }) => {
   return (
-    <div className="w-11/12 flex flex-col justify-center items-center h-3/5">
+    <div className="w-full flex flex-col justify-center items-center h-3/5">
       <Table
         routes={routes}
         origin={origin}

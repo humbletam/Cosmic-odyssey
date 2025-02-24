@@ -85,33 +85,38 @@ export const MainPage: FC = () => {
     return <p>No routes available</p>;
 
   return (
-    <div className="bg-gray-100 min-h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="text-3xl my-10 font-bold text-center text-blue-600">
-        Cosmos Odyssey - Travel Deals
-      </h1>
+    <div className="bg-gray-100 min-h-screen w-full flex flex-col gap-10 justify-center items-center">
+      <div className="flex justify-center gap-20 w-10/12 my-6 mt-36">
+        <h1 className="text-3xl flex items-center font-bold text-center text-gray-700">
+          Cosmos Odyssey - Travel Deals
+        </h1>
+        {selectedRoute && selectedProvider && (
+          <BookingForm
+            selectedRoute={selectedRoute}
+            selectedProvider={selectedProvider}
+            selectedCompany={selectedProvider.company}
+            onBook={handleBook}
+          />
+        )}
+      </div>
       <PlanetFilter origin={origin} setOrigin={setOrigin} />
-      <FilterSortControls
-        filter={companyFilter}
-        setFilter={setCompanyFilter}
-        sortType={sortType}
-        setSortType={setSortType}
-      />
-      {selectedRoute && selectedProvider && (
-        <BookingForm
-          selectedRoute={selectedRoute}
-          selectedProvider={selectedProvider}
-          onBook={handleBook}
+      <div className="flex flex-col w-10/12">
+        <FilterSortControls
+          filter={companyFilter}
+          setFilter={setCompanyFilter}
+          sortType={sortType}
+          setSortType={setSortType}
         />
-      )}
-      <PriceTable
-        routes={filteredRoutes}
-        onRouteSelect={(route, provider) => {
-          setSelectedRoute(route);
-          setSelectedProvider(provider);
-        }}
-        selectedRouteId={selectedRoute?.id || null}
-        origin={origin}
-      />
+        <PriceTable
+          routes={filteredRoutes}
+          onRouteSelect={(route, provider) => {
+            setSelectedRoute(route);
+            setSelectedProvider(provider);
+          }}
+          selectedRouteId={selectedRoute?.id || null}
+          origin={origin}
+        />
+      </div>
     </div>
   );
 };
