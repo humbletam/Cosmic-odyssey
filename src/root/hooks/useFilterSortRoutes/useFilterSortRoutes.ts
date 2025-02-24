@@ -1,33 +1,37 @@
 import { useEffect, useState } from "react";
-import type { Route } from "@/root/types";
+import type { Route } from "@/root/types/route-types/route-types";
 
-export const useFilterSortRoutes = (routes: Route[]) => {
-  const [filteredRoutes, setFilteredRoutes] = useState<Route[]>([]);
+export const useFilterSortRoutes = (routes: Route[], origin: string) => {
+  const [filteredRoutes, setFilteredRoutes] = useState<Route[]>(routes);
   const [filter, setFilter] = useState<string>("");
   const [sortType, setSortType] = useState<string>("price-asc");
 
   useEffect(() => {
     let updatedRoutes = routes.map((route) => ({ ...route }));
-
-    if (filter) {
+    const inputOrigin = origin.trim().toLowerCase();
+    const inputCompanyFilter = filter.trim().toLowerCase();
+    if (inputOrigin) {
+      updatedRoutes = updatedRoutes.filter((route) =>
+        route.providers.some(
+          (provider) => (provider.origin || "").toLowerCase() === inputOrigin,
+        ),
+      );
+    }
+    if (inputCompanyFilter) {
       updatedRoutes = updatedRoutes
-        .map((route) => {
-          const filteredProviders = route.providers.filter((provider) =>
-            provider.company.name
-              .toLowerCase()
-              .includes(filter.trim().toLowerCase()),
-          );
-          return { ...route, providers: filteredProviders };
-        })
+        .map((route) => ({
+          ...route,
+          providers: route.providers.filter((provider) =>
+            provider.company.name.toLowerCase().includes(inputCompanyFilter),
+          ),
+        }))
         .filter((route) => route.providers.length > 0);
     }
-
     updatedRoutes = updatedRoutes.map((route) => {
       const sortedProviders = [...route.providers];
       const [type, order] = sortType.split("-");
       sortedProviders.sort((a, b) => {
-        let comparison = 0;
-        const getValue = (provider: any, key: string) => {
+        const getValue = (provider: any, key: string): number => {
           switch (key) {
             case "price":
               return provider.price;
@@ -39,14 +43,13 @@ export const useFilterSortRoutes = (routes: Route[]) => {
               return 0;
           }
         };
-        comparison = getValue(a, type) - getValue(b, type);
+        const comparison = getValue(a, type) - getValue(b, type);
         return order === "asc" ? comparison : -comparison;
       });
       return { ...route, providers: sortedProviders };
     });
-
     setFilteredRoutes(updatedRoutes);
-  }, [routes, filter, sortType]);
+  }, [routes, origin, filter, sortType]);
 
   return { filteredRoutes, filter, setFilter, sortType, setSortType };
 };
