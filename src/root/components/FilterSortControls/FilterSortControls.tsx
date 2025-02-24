@@ -15,7 +15,7 @@ export const FilterSortControls: FC<FilterSortControlsProps> = ({
   setSortType,
 }) => {
   return (
-    <div className="w-11/12 flex justify-between mb-4">
+    <div className="w-full flex justify-between mb-4">
       <input
         type="text"
         placeholder="Filter by company"

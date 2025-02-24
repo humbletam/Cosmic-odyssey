@@ -1,29 +1,122 @@
-import { FC } from "react";
-import { useFetchRoutes, useFilterSortRoutes } from "@/root/hooks";
-import { FilterSortControls, PriceTable } from "@/root/components";
+import { FC, useEffect, useMemo, useState } from "react";
+import { Provider, Route } from "@/root/types";
+import {
+  getPriceLists,
+  saveBooking,
+  savePriceList,
+} from "@/root/helpers/booking-storage/storage";
+import {
+  BookingForm,
+  FilterSortControls,
+  PlanetFilter,
+  PriceTable,
+} from "@/root/components";
+import { useFetchRoutes, useGenerateAndFilterRoutes } from "@/root/hooks";
 
 export const MainPage: FC = () => {
-  const { routes, loading, error } = useFetchRoutes();
-  const { filteredRoutes, filter, setFilter, sortType, setSortType } =
-    useFilterSortRoutes(routes);
+  const { routes: fetchedRoutes, loading, error } = useFetchRoutes();
+  const [origin, setOrigin] = useState("");
+  const [companyFilter, setCompanyFilter] = useState("");
+  const [sortType, setSortType] = useState("price-asc");
+  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null,
+  );
+
+  const providers = useMemo(() => {
+    return fetchedRoutes
+      ? fetchedRoutes.flatMap((route) => route.providers)
+      : [];
+  }, [fetchedRoutes]);
+  const filteredRoutes = useGenerateAndFilterRoutes(
+    providers,
+    origin,
+    companyFilter,
+    sortType,
+  );
+
+  const isPriceListValid = () => {
+    const priceLists = getPriceLists();
+    if (priceLists.length > 0) {
+      const latestPriceList = priceLists[0];
+      return new Date(latestPriceList.validUntil) > new Date();
+    }
+    return false;
+  };
+
+  const handleBook = (
+    firstName: string,
+    lastName: string,
+    route: Route,
+    provider: Provider,
+  ) => {
+    if (!isPriceListValid()) {
+      alert(
+        "Price list has expired. Please refresh the page to get the latest prices.",
+      );
+      return;
+    }
+    const booking = {
+      firstName,
+      lastName,
+      routeId: route.id,
+      providerId: provider.id,
+      totalQuotedPrice: provider.price,
+      totalQuotedTravelTime: provider.travelTime || 0,
+      companyName: provider.company.name,
+    };
+    saveBooking(booking);
+    console.log(
+      `Booking made for ${firstName} ${lastName} on route ${route.id} with provider ${provider.company.name}`,
+    );
+  };
+
+  useEffect(() => {
+    if (providers.length > 0) {
+      const validUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+      const priceList = { validUntil, routes: fetchedRoutes };
+      savePriceList(priceList);
+    }
+  }, [providers, fetchedRoutes]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (!filteredRoutes || filteredRoutes.length === 0)
+  if (!fetchedRoutes || fetchedRoutes.length === 0)
     return <p>No routes available</p>;
 
   return (
-    <div className="bg-gray-100 min-h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="text-3xl my-10 font-bold text-center text-blue-600">
-        Cosmos Odyssey - Travel Deals
-      </h1>
-      <FilterSortControls
-        filter={filter}
-        setFilter={setFilter}
-        sortType={sortType}
-        setSortType={setSortType}
-      />
-      <PriceTable routes={filteredRoutes} />
+    <div className="bg-gray-100 min-h-screen w-full flex flex-col gap-10 justify-center items-center">
+      <div className="flex justify-center gap-20 w-10/12 my-6 mt-36">
+        <h1 className="text-3xl flex items-center font-bold text-center text-gray-700">
+          Cosmos Odyssey - Travel Deals
+        </h1>
+        {selectedRoute && selectedProvider && (
+          <BookingForm
+            selectedRoute={selectedRoute}
+            selectedProvider={selectedProvider}
+            selectedCompany={selectedProvider.company}
+            onBook={handleBook}
+          />
+        )}
+      </div>
+      <PlanetFilter origin={origin} setOrigin={setOrigin} />
+      <div className="flex flex-col w-10/12">
+        <FilterSortControls
+          filter={companyFilter}
+          setFilter={setCompanyFilter}
+          sortType={sortType}
+          setSortType={setSortType}
+        />
+        <PriceTable
+          routes={filteredRoutes}
+          onRouteSelect={(route, provider) => {
+            setSelectedRoute(route);
+            setSelectedProvider(provider);
+          }}
+          selectedRouteId={selectedRoute?.id || null}
+          origin={origin}
+        />
+      </div>
     </div>
   );
 };

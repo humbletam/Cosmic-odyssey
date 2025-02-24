@@ -14,7 +14,6 @@ export const useCalculateTravelDetails = (providers: Provider[]) => {
 
       const roundedTravelTime = Math.round(travelTime * 100) / 100;
       const distance = roundedTravelTime * 1000;
-
       const roundedDistance = Math.round(distance * 100) / 100;
 
       return {
