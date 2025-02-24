@@ -11,6 +11,10 @@ export interface Provider {
   price: number;
   distance?: number;
   travelTime?: number;
+  origin?: string;
+  destination?: string;
+  displayFlightStart?: string;
+  displayFlightEnd?: string;
 }
 
 export interface Route {
