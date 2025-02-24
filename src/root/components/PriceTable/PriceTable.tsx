@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Provider, Route } from "@/root/types/route-types/route-types";
+import { Provider, Route } from "@/root/types";
 import { Table } from "@/root/components";
 
 interface PriceTableProps {

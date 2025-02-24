@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { Company, Provider, Route } from "@/root/types/route-types/route-types";
+import { Company, Provider, Route } from "@/root/types";
 import { SuccessIcon } from "@/root/ui";
 
 interface BookingFormProps {
