@@ -1,6 +1,7 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { Company, Provider, Route } from "@/root/types";
+import { Company, Provider, Route } from "@/root/types/route-types/route-types";
 import { SuccessIcon } from "@/root/ui";
+import { formatDate } from "@/root/hooks";
 
 interface BookingFormProps {
   selectedRoute: Route;
@@ -24,19 +25,6 @@ export const BookingForm: FC<BookingFormProps> = ({
   const [lastName, setLastName] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onBook(firstName, lastName, selectedRoute, selectedProvider);
-    setBookingSuccess(true);
-  };
-
-  const renderLabelValue = (label: string, value?: string) => (
-    <p className="text-gray-700">
-      <strong>{label}: </strong>
-      {value || "N/A"}
-    </p>
-  );
-
   const nameFields = [
     {
       label: "First Name",
@@ -51,6 +39,26 @@ export const BookingForm: FC<BookingFormProps> = ({
         setLastName(e.target.value),
     },
   ];
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onBook(firstName, lastName, selectedRoute, selectedProvider);
+    setBookingSuccess(true);
+  };
+
+  const renderLabelValue = (label: string, value?: string) => (
+    <p className="text-gray-700">
+      <strong>{label}: </strong>
+      {value || "N/A"}
+    </p>
+  );
+
+  const departureFormatted =
+    selectedProvider.displayFlightStart ||
+    formatDate(new Date(selectedProvider.flightStart));
+  const arrivalFormatted =
+    selectedProvider.displayFlightEnd ||
+    formatDate(new Date(selectedProvider.flightEnd));
 
   return (
     <div className="w-full max-w-sm mt-6">
@@ -70,19 +78,12 @@ export const BookingForm: FC<BookingFormProps> = ({
             Book Your Travel
           </h2>
           <div className="mb-4">
-            {renderLabelValue(
-              "Departure",
-              selectedProvider.displayFlightStart ||
-                selectedProvider.flightStart,
-            )}
-            {renderLabelValue(
-              "Arrival",
-              selectedProvider.displayFlightEnd || selectedProvider.flightEnd,
-            )}
+            {renderLabelValue("Departure at", departureFormatted)}
+            {renderLabelValue("Arrival at", arrivalFormatted)}
           </div>
           <div className="w-full flex flex-col">
-            {renderLabelValue("Departure", selectedProvider.origin)}
-            {renderLabelValue("Destination", selectedProvider.destination)}
+            {renderLabelValue("Departure", selectedRoute.routeInfo.from.name)}
+            {renderLabelValue("Destination", selectedRoute.routeInfo.to.name)}
           </div>
           {renderLabelValue(
             "Travel time",

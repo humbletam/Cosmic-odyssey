@@ -1,5 +1,14 @@
 import { useMemo } from "react";
-import { Provider } from "@/root/types";
+import { Provider } from "@/root/types/route-types/route-types";
+
+export const formatDate = (date: Date): string => {
+  const dd = date.getDate().toString().padStart(2, "0");
+  const mm = (date.getMonth() + 1).toString().padStart(2, "0");
+  const yyyy = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${dd}.${mm}.${yyyy} ${hours}:${minutes}`;
+};
 
 export const useCalculateTravelDetails = (providers: Provider[]): Provider[] =>
   useMemo(() => {
@@ -14,8 +23,8 @@ export const useCalculateTravelDetails = (providers: Provider[]): Provider[] =>
         ...provider,
         travelTime: roundedTravelTime,
         distance: roundedDistance,
-        displayFlightStart: provider.displayFlightStart || start.toISOString(),
-        displayFlightEnd: provider.displayFlightEnd || end.toISOString(),
+        displayFlightStart: formatDate(start),
+        displayFlightEnd: formatDate(end),
       };
     });
   }, [providers]);
