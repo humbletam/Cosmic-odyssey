@@ -12,7 +12,6 @@ export const useFetchRoutes = () => {
         const response = await fetch(
           "https://api.allorigins.win/get?url=https://cosmosodyssey.azurewebsites.net/api/v1.0/TravelPrices",
         );
-        if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         const routesData = JSON.parse(data.contents);
         setRoutes(routesData.legs);

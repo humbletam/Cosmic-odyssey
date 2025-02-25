@@ -1,17 +1,27 @@
 import { FC } from "react";
-import { origins } from "@/root/consts";
+import cn from "classnames";
 import { TextWithIcon } from "@/root/components";
 import { PlanetIcon } from "@/root/ui";
-import cn from "classnames";
 
 interface PlanetFilterProps {
   origin: string;
   setOrigin: (origin: string) => void;
 }
 
+const origins = [
+  "Mercury",
+  "Venus",
+  "Earth",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+];
+
 export const PlanetFilter: FC<PlanetFilterProps> = ({ origin, setOrigin }) => {
   return (
-    <div className="w-10/12 flex justify-center gap-10">
+    <div className="w-full flex justify-center gap-10">
       {origins.map((planet) => (
         <button
           className={cn(

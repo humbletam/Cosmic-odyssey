@@ -1,3 +1,15 @@
+export interface FromTo {
+  id: string;
+  name: string;
+}
+
+export interface RouteInfo {
+  id: string;
+  from: FromTo;
+  to: FromTo;
+  distance: number;
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -19,5 +31,6 @@ export interface Provider {
 
 export interface Route {
   id: string;
+  routeInfo: RouteInfo;
   providers: Provider[];
 }

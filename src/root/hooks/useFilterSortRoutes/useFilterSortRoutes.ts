@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Route } from "@/root/types/route-types/route-types";
+import type { Route } from "@/root/types";
 
 export const useFilterSortRoutes = (routes: Route[], origin: string) => {
   const [filteredRoutes, setFilteredRoutes] = useState<Route[]>(routes);

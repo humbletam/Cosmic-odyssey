@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
+import { useFetchRoutes, useFilterRoutes } from "@/root/hooks";
 import { Provider, Route } from "@/root/types";
 import {
   getPriceLists,
@@ -11,7 +12,6 @@ import {
   PlanetFilter,
   PriceTable,
 } from "@/root/components";
-import { useFetchRoutes, useGenerateAndFilterRoutes } from "@/root/hooks";
 
 export const MainPage: FC = () => {
   const { routes: fetchedRoutes, loading, error } = useFetchRoutes();
@@ -23,13 +23,9 @@ export const MainPage: FC = () => {
     null,
   );
 
-  const providers = useMemo(() => {
-    return fetchedRoutes
-      ? fetchedRoutes.flatMap((route) => route.providers)
-      : [];
-  }, [fetchedRoutes]);
-  const filteredRoutes = useGenerateAndFilterRoutes(
-    providers,
+  const generatedRoutes = useMemo(() => fetchedRoutes || [], [fetchedRoutes]);
+  const filteredRoutes = useFilterRoutes(
+    generatedRoutes,
     origin,
     companyFilter,
     sortType,
@@ -38,8 +34,8 @@ export const MainPage: FC = () => {
   const isPriceListValid = () => {
     const priceLists = getPriceLists();
     if (priceLists.length > 0) {
-      const latestPriceList = priceLists[0];
-      return new Date(latestPriceList.validUntil) > new Date();
+      const latest = priceLists[0];
+      return new Date(latest.validUntil) > new Date();
     }
     return false;
   };
@@ -72,12 +68,12 @@ export const MainPage: FC = () => {
   };
 
   useEffect(() => {
-    if (providers.length > 0) {
+    if (fetchedRoutes.length > 0) {
       const validUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
       const priceList = { validUntil, routes: fetchedRoutes };
       savePriceList(priceList);
     }
-  }, [providers, fetchedRoutes]);
+  }, [fetchedRoutes]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -85,7 +81,7 @@ export const MainPage: FC = () => {
     return <p>No routes available</p>;
 
   return (
-    <div className="bg-gray-100 min-h-screen w-full flex flex-col gap-10 justify-center items-center">
+    <div className="bg-gray-100 min-h-screen w-full flex flex-col gap-10 justify-center items-center mb-20">
       <div className="flex justify-center gap-20 w-10/12 my-6 mt-36">
         <h1 className="text-3xl flex items-center font-bold text-center text-gray-700">
           Cosmos Odyssey - Travel Deals
@@ -94,13 +90,13 @@ export const MainPage: FC = () => {
           <BookingForm
             selectedRoute={selectedRoute}
             selectedProvider={selectedProvider}
-            selectedCompany={selectedProvider.company}
             onBook={handleBook}
+            selectedCompany={selectedProvider.company}
           />
         )}
       </div>
       <PlanetFilter origin={origin} setOrigin={setOrigin} />
-      <div className="flex flex-col w-10/12">
+      <div className="flex flex-col w-10/12 mb-10">
         <FilterSortControls
           filter={companyFilter}
           setFilter={setCompanyFilter}
@@ -115,6 +111,7 @@ export const MainPage: FC = () => {
           }}
           selectedRouteId={selectedRoute?.id || null}
           origin={origin}
+          selectedProviderId={selectedProvider?.id}
         />
       </div>
     </div>

@@ -7,6 +7,7 @@ interface PriceTableProps {
   onRouteSelect: (route: Route, provider: Provider) => void;
   selectedRouteId: string | null;
   origin: string;
+  selectedProviderId?: string;
 }
 
 export const PriceTable: FC<PriceTableProps> = ({
@@ -14,6 +15,7 @@ export const PriceTable: FC<PriceTableProps> = ({
   onRouteSelect,
   selectedRouteId,
   origin,
+  selectedProviderId,
 }) => {
   return (
     <div className="w-full flex flex-col justify-center items-center h-3/5">
@@ -22,6 +24,7 @@ export const PriceTable: FC<PriceTableProps> = ({
         origin={origin}
         onRouteSelect={onRouteSelect}
         selectedRouteId={selectedRouteId}
+        selectedProviderId={selectedProviderId}
       />
     </div>
   );
