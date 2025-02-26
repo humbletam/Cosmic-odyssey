@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import { useFetchRoutes, useFilterRoutes } from "@/root/hooks";
+import { formatDate, useFetchRoutes, useFilterRoutes } from "@/root/hooks";
 import { Provider, Route } from "@/root/types";
 import {
   getPriceLists,
@@ -55,15 +55,15 @@ export const MainPage: FC = () => {
     const booking = {
       firstName,
       lastName,
-      routeId: route.id,
-      providerId: provider.id,
+      routeInfo: `${route.routeInfo.from.name} - ${route.routeInfo.to.name}`,
+      company: provider.company.name,
       totalQuotedPrice: provider.price,
       totalQuotedTravelTime: provider.travelTime || 0,
-      companyName: provider.company.name,
+      date: `${formatDate(new Date(provider.flightStart))} - ${formatDate(new Date(provider.flightEnd))}`,
     };
     saveBooking(booking);
     console.log(
-      `Booking made for ${firstName} ${lastName} on route ${route.id} with provider ${provider.company.name}`,
+      `Booking made for ${firstName} ${lastName} on route ${route.routeInfo.from.name} - ${route.routeInfo.to.name} with company ${provider.company.name}`,
     );
   };
 
@@ -82,7 +82,7 @@ export const MainPage: FC = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen w-full flex flex-col gap-10 justify-center items-center mb-20">
-      <div className="flex justify-center gap-20 w-10/12 my-6 mt-36">
+      <div className="flex justify-center gap-20 w-10/12 my-6 mt-10">
         <h1 className="text-3xl flex items-center font-bold text-center text-gray-700">
           Cosmos Odyssey - Travel Deals
         </h1>

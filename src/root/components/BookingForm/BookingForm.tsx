@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { Company, Provider, Route } from "@/root/types/route-types/route-types";
+import { Company, Provider, Route } from "@/root/types";
 import { SuccessIcon } from "@/root/ui";
 import { formatDate } from "@/root/hooks";
 
@@ -78,12 +78,14 @@ export const BookingForm: FC<BookingFormProps> = ({
             Book Your Travel
           </h2>
           <div className="mb-4">
-            {renderLabelValue("Departure at", departureFormatted)}
-            {renderLabelValue("Arrival at", arrivalFormatted)}
+            {renderLabelValue("Departure time", departureFormatted)}
+            {renderLabelValue("Arrival time", arrivalFormatted)}
           </div>
           <div className="w-full flex flex-col">
-            {renderLabelValue("Departure", selectedRoute.routeInfo.from.name)}
-            {renderLabelValue("Destination", selectedRoute.routeInfo.to.name)}
+            {renderLabelValue(
+              "Route",
+              `${selectedRoute.routeInfo.from.name} - ${selectedRoute.routeInfo.to.name}`,
+            )}
           </div>
           {renderLabelValue(
             "Travel time",
