@@ -5,6 +5,7 @@ import {
   useCalculateTravelDetails,
 } from "@/root/hooks/useCalculateTravelDetails/useCalculateTravelDetails";
 import { useFilterRoutes } from "@/root/hooks/useFilterRoutes/useFilterRoutes";
+import { useBookings } from "@/root/hooks/useBookings/useBookings";
 
 export {
   useFetchRoutes,
@@ -12,4 +13,5 @@ export {
   useCalculateTravelDetails,
   useFilterRoutes,
   formatDate,
+  useBookings,
 };

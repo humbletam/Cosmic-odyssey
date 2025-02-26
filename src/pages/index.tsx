@@ -1,5 +1,10 @@
 import { MainPage } from "@/root/pages";
+import { AppLayout } from "@/root/components";
 
 export default function Home() {
-  return <MainPage />;
+  return (
+    <AppLayout>
+      <MainPage />
+    </AppLayout>
+  );
 }
